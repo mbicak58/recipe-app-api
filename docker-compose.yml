@@ -1,0 +1,15 @@
+version: '3.9' #definieren der docker-compose version
+
+services: 
+  app: #definieren eines services namens app
+    build: # wo wir es bauen werden definieren des build kontexts fuer den service app 
+      context: . #aktuelles verzeichnis als build kontext
+      args:
+        - DEV=true #build argument um die installation der entwicklungs abhaengigkeiten zu steuern 
+    ports: #definieren der ports die wir mappen wollen
+      - '8000:8000' #mappen des ports 8000 des containers auf den port 8000 des hosts
+    volumes: #definieren der volumes die wir mounten wollen 
+      - ./app:/app
+    command: > #definieren des befehls der ausgefuehrt wird wenn der container startet
+      sh -c 'python manage.py runserver 0.0.0.0:8000' 
+    #starten des django entwicklungsservers auf allen interfaces auf port 8000, damit er von aussen erreichbar ist 

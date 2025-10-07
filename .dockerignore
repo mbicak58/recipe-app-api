@@ -1,0 +1,25 @@
+#exclude files that should not be included in the Docker build context
+
+#git 
+.git
+.gitignore 
+
+# docker
+.docker
+
+# Python
+
+app/__pycache__/ 
+# exclude all __pycache__ folders in app directory
+app/*/__pycache__/ 
+# exclude all __pycache__ folders in subdirectories of app
+app/*/*/__pycache__/   
+# exclude all __pycache__ folders in sub-subdirectories of app
+app/*/*/*/__pycache__/ 
+# exclude all __pycache__ folders in sub-sub-subdirectories of app
+.env 
+# exclude environment variable files
+.venv 
+# exclude virtual environment folder
+venv/ 
+# exclude virtual environment folder
