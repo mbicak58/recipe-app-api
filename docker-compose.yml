@@ -5,9 +5,30 @@ services:
       args:
         - DEV=true #build argument um die installation der entwicklungs abhaengigkeiten zu steuern 
     ports: #definieren der ports die wir mappen wollen
-      - '8000:8000' #mappen des ports 8000 des containers auf den port 8000 des hosts
+      - "8000:8000" #mappen des ports 8000 des containers auf den port 8000 des hosts
     volumes: #definieren der volumes die wir mounten wollen 
       - ./app:/app 
     command: > #definieren des befehls der ausgefuehrt wird wenn der container startet
-      sh -c 'python manage.py runserver 0.0.0.0:8000' 
+      sh -c "python manage.py wait_for_db &&
+            python manage.py migrate &&
+            python manage.py runserver 0.0.0.0:8000"
     #starten des django entwicklungsservers auf allen interfaces auf port 8000, damit er von aussen erreichbar ist 
+    environment: #information Django needs to connect to Postgres
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+    depends_on:
+      - db
+
+  db: # the Postgres DB 
+    image: postgres:13-alpine
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=devdb
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+
+volumes:
+  dev-db-data:

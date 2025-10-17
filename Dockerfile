@@ -24,6 +24,11 @@ ARG DEV=false
 RUN python -m venv /py && \
 # Create a virtual environment in /py
     /py/bin/pip install --upgrade pip && \ 
+    apk add --update --no-cache postgresql-client && \
+    # we installed the postgresql client inside our alpine image, to connect
+    apk add --update --no-cache --virtual .tmp-build-deps \
+    # it sets a virtual dependencies package
+        build-base postgresql-dev musl-dev python3-dev && \
     # Upgrade pip in the virtual environment
     /py/bin/pip install -r /tmp/requirements.txt && \ 
     # Install the dependencies from the requirements file
@@ -33,6 +38,8 @@ RUN python -m venv /py && \
     # If DEV is true, install development dependencies
     rm -rf /tmp && \ 
     # Remove the temporary requirements file
+    apk del .tmp-build-deps && \
+    # it removes the files in line 31
     adduser \ 
     # Create a non-root user to run the application
         --disabled-password \ 
